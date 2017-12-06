@@ -15,11 +15,6 @@ public abstract class GameObject {
 	protected int y;
 	protected int width;
 	protected int height;
-	
-	public static final int STAND = 0;
-	public static final int MOVE_LEFT = 1;
-	public static final int MOVE_RIGHT = 2;
-	protected int state = STAND;
 
 	public GameObject(int width, int height, int x, int y) {
 		this.width = width;

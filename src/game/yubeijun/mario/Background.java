@@ -18,14 +18,23 @@ public class Background extends GameObject {
 		speed = 6;
 	}
 	
+	/**
+	 * 背景向左移动（相当于主角向右走）
+	 */
 	@Override
 	public void stepLeft() {
 		x -= speed;
 	}
 
+	/**
+	 * 背景向右移动（相当于主角向左走）
+	 */
 	@Override
 	public void stepRight() {
 		x += speed;
+		if (x>0) {  //移到尽头，不能再移动
+			x = 0;
+		}
 	}
 
 	@Override
@@ -33,8 +42,17 @@ public class Background extends GameObject {
 		return image;
 	}
 
+	public int getSpeed() {
+		return speed;
+	}
 
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
 
-	
+	public int getX() {
+		return this.x;
+	}
+
 	
 }
