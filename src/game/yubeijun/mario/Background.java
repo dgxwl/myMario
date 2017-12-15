@@ -8,51 +8,38 @@ import java.awt.image.BufferedImage;
  *
  */
 public class Background extends GameObject {
-	private static BufferedImage image;
+	private static BufferedImage[] images;
 	static {
-		image = loadImage("background.png");
-	}
-	private int speed;
-	public Background() {
-		super(0, World.HEIGHT, 0, 0);
-		speed = 6;
-	}
-	
-	/**
-	 * 背景向左移动（相当于主角向右走）
-	 */
-	@Override
-	public void stepLeft() {
-		x -= speed;
-	}
-
-	/**
-	 * 背景向右移动（相当于主角向左走）
-	 */
-	@Override
-	public void stepRight() {
-		x += speed;
-		if (x>0) {  //移到尽头，不能再移动
-			x = 0;
+		images = new BufferedImage[2];
+		for (int i = 0; i < images.length; i++) {
+			images[i] = loadImage("background" + i +".png");
 		}
 	}
+	private int backgroundNum;
+	private int speed;
+	public Background() {
+		super(World.WIDTH, World.HEIGHT, 0, 0);
+		backgroundNum = 0;
+	}
+	
 
 	@Override
 	public BufferedImage getImage() {
-		return image;
-	}
-
-	public int getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(int speed) {
-		this.speed = speed;
+		return images[backgroundNum];
 	}
 
 	public int getX() {
 		return this.x;
 	}
 
-	
+	public void nextBackground() {
+		backgroundNum++;
+	}
+
+	@Override
+	public void stepLeft() {}
+
+
+	@Override
+	public void stepRight() {}
 }

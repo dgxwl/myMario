@@ -25,6 +25,9 @@ public class Mario extends GameObject {
 	public static final int RIGHT_JUMP = 5;
 
 	private int state = RIGHT_STAND;
+	
+	private boolean isOnGround = true;
+	
 	static {
 		rImages = new BufferedImage[4];
 		for (int i = 0; i < rImages.length; i++) {
@@ -46,35 +49,28 @@ public class Mario extends GameObject {
 		super(48, 96, 300, 528);
 		state = RIGHT_STAND;
 		gravity = 2;
-		ySpeed = 0;
-		xSpeed = 0;
+		ySpeed = 3;
+		xSpeed = 8;
 	}
 
 	/** 向左走 */
 	public void stepLeft() {
-		xSpeed = 0;
 		state = MOVE_LEFT;
-	}
-	
-	public void stepRealLeft() {
-		state = MOVE_LEFT;
-		xSpeed = 6;
 		x -= xSpeed;
 		if (x<0) {
 			x = 0;
 		}
 	}
-	
-	public void stepRealRight() {
-		state = MOVE_RIGHT;
-		xSpeed = 6;
-		x += xSpeed;
-	}
 
 	/** 向右走 */
 	public void stepRight() {
-		xSpeed = 0;
 		state = MOVE_RIGHT;
+		x += xSpeed;
+	}
+	
+	/** 向上跳 */
+	public void jump() {
+		y  -= 30;
 	}
 	
 	/** 向左跳 */
@@ -84,9 +80,7 @@ public class Mario extends GameObject {
 		y += ySpeed;
 		ySpeed += gravity;
 		if (y>528) {
-			y = 528;
-			ySpeed = 2;
-			state = RIGHT_STAND;
+			isOnGround = false;
 		}
 	}
 	
@@ -107,12 +101,28 @@ public class Mario extends GameObject {
 	 * 马里奥受到重力的作用
 	 */
 	public void gravity() {
-		y += ySpeed;
-		ySpeed += gravity;
-		if (y>528) {
+		if (!isOnGround) {
+			y += ySpeed;
+			ySpeed += gravity;
+		} else {
 			y = 528;
-			ySpeed = 2;
 		}
+	}
+
+	public boolean isOnGround() {
+		return isOnGround;
+	}
+
+	public void setOnGround(boolean isOnGround) {
+		this.isOnGround = isOnGround;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	public void setY(int y) {
+		this.y = y;
 	}
 
 	int rIndex = 0;
@@ -160,6 +170,10 @@ public class Mario extends GameObject {
 	
 	public int getX() {
 		return this.x;
+	}
+	
+	public void setX(int x) {
+		this.x = x;
 	}
 
 	public int getxSpeed() {

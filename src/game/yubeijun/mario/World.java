@@ -1,13 +1,18 @@
 package game.yubeijun.mario;
 
+import java.applet.AudioClip;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 
 /**
  * 游戏运行
@@ -32,44 +37,30 @@ public class World extends JPanel {
 	public void flexibly() {
 		if (isA && !isD && !isW) {  //按下A键
 			mario.stepLeft();
-			if (mario.getX()>=background.getX() && mario.getX()<=(background.getX()+306)) {
-				background.setSpeed(0);
-				mario.stepRealLeft();
-			} else {
-				mario.stepLeft();
-			}
-			
-			background.setSpeed(6);
-			background.stepRight();
 		} else if (!isA && isD && !isW) {  //按下D键
 			mario.stepRight();
-			if (mario.getX()>=background.getX() && mario.getX()<=(background.getX()+306)) {
-				background.setSpeed(0);
-				mario.stepRealRight();
-			} else {
-				mario.stepRight();
-			}
-			
-			background.setSpeed(6);
-			background.stepLeft();
 		} else if (!isA && !isD && isW) {  //按下W键
-			if (mario.getState() == Mario.MOVE_RIGHT || mario.getState() == Mario.RIGHT_STAND) {
-				mario.jumpRight();
-			} else if (mario.getState() == Mario.MOVE_LEFT || mario.getState() == Mario.LEFT_STAND) {
-				mario.jumpLeft();
-			}
+			mario.setOnGround(false);
+			mario.jump();
 		} else if (isA && !isD && isW) {
-			mario.stepLeft();
-			background.setSpeed(13);
-			background.stepRight();
-			mario.jumpLeft();
+			
 		} else if (!isA && isD && isW) {
-			mario.stepRight();
-			background.setSpeed(13);
-			background.stepLeft();
-			mario.jumpRight();
+			
 		}
 	}
+	
+	public void switchBackground() {
+		if (mario.getX()+48>=World.WIDTH) {
+			mario.setX(0);
+			background.nextBackground();
+		}
+	}
+	
+//	public void isMarioOnGround() a{
+//		if () {
+//			
+//		}
+//	}
 
 	public void action() {
 		KeyAdapter l = new KeyAdapter() {
@@ -117,6 +108,7 @@ public class World extends JPanel {
 			@Override
 			public void run() {
 				flexibly();
+				switchBackground();
 				mario.gravity();
 				repaint();
 			}
@@ -141,6 +133,26 @@ public class World extends JPanel {
 
 		world.action();
 		world.requestFocus();
+
+		PlayMusic p = new PlayMusic();
+		p.play();
+
 	}
 
+}
+
+class PlayMusic {
+    public static AudioClip loadSound(String filename) {
+        URL url = null;
+        try {
+            url = new URL("file:" + filename);
+        }
+        catch (MalformedURLException e) {;}
+        return JApplet.newAudioClip(url);
+    }
+    
+    public void play() {
+        AudioClip christmas = loadSound("bg.wav");
+        christmas.loop();
+    }
 }
