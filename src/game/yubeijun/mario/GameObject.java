@@ -23,8 +23,8 @@ public abstract class GameObject {
 		this.y = y;
 	}
 	
-	public abstract void stepLeft();
-	public abstract void stepRight();
+//	public abstract void stepLeft();
+//	public abstract void stepRight();
 
 	/**
 	 * ¶ÁÈ¡Í¼Æ¬ÎÄ¼ş

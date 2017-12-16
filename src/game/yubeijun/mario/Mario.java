@@ -31,6 +31,8 @@ public class Mario extends GameObject {
 	private int state = RIGHT_STAND;
 	/** 是否在地面上 */
 	private boolean isOnGround = true;
+	/** 是否在砖上 */
+	private boolean isOnBrick = false;
 	
 	static {
 		rImages = new BufferedImage[4];
@@ -201,4 +203,11 @@ public class Mario extends GameObject {
 		this.xSpeed = xSpeed;
 	}
 
+	/** 判断马里奥是否站在砖上 */
+	public boolean isOnBrick(Brick brick) {
+		int x1 = brick.x - this.width;
+		int x2 = brick.x + brick.width;
+		int y1 = brick.y - this.height;
+		return x>=x1 && x<=x2 && y<=y1+30 && y>=y1-5;
+	}
 }

@@ -28,11 +28,44 @@ public class World extends JPanel {
 	private boolean isA = false;
 	private boolean isD = false;
 	private boolean isW = false;
+	
 	private Background background = new Background();
 	private Mario mario = new Mario();
+	private Brick[] bricks = new Brick[3];  //全关一共有30块砖头
+	
+//	public void initGameObject() {
+//		bricks[0] = new Brick(192, 432, 1);
+//		bricks[1] = new Brick(288, 432, 1);
+//		bricks[2] = new Brick(384, 432, 1);
+//	}
+	
+	public void initGameObject() {
+		bricks[0] = new Brick(1);
+		bricks[1] = new Brick(1);
+		bricks[2] = new Brick(1);
+		bricks[3] = new Brick(5);
+		bricks[4] = new Brick(5);
+		bricks[5] = new Brick(5);
+		bricks[6] = new Brick(5);
+		bricks[7] = new Brick(5);
+		bricks[8] = new Brick(5);
+		bricks[9] = new Brick(5);
+		bricks[10] = new Brick(5);
+		bricks[11] = new Brick(5);
+		bricks[12] = new Brick(5);
+	}
+	
+	public void hideObject() {
+		for (int i = 0; i < bricks.length; i++) {
+			Brick b = bricks[i];
+			if (b.getScene() != background.getBackgroundNum()) {
+				b.setY(-10);
+			}
+		}
+	}
 
 	/**
-	 * 解决按键延迟
+	 * 解决按键延迟和同时按2键以上
 	 */
 	public void flexibly() {
 		if (isA && !isD && !isW) {  //按下A键
@@ -70,8 +103,27 @@ public class World extends JPanel {
 			mario.setY(528);
 		}
 	}
+	
+	public void standOnBrick() {
+		for (int i = 0; i < bricks.length; i++) {
+			Brick b = bricks[i];
+			if (mario.isOnBrick(b)) {
+				if (mario.getState()==Mario.LEFT_JUMP || mario.getState()==Mario.LEFT_SPAN_JUMP) {
+					mario.setState(Mario.LEFT_STAND);
+				}
+				if (mario.getState()==Mario.RIGHT_JUMP || mario.getState()==Mario.RIGHT_SPAN_JUMP) {
+					mario.setState(Mario.RIGHT_STAND);
+				}
+				mario.setySpeed(0);
+				mario.setY(b.getY() - 96);
+			}
+		}
+	}
 
 	public void action() {
+		
+		initGameObject();
+		
 		KeyAdapter l = new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -86,6 +138,8 @@ public class World extends JPanel {
 				case 87: // 按W跳跃
 					isW = true;
 					break;
+				case KeyEvent.VK_ESCAPE:  //按esc退出
+					System.exit(0);
 				}
 			}
 
@@ -116,15 +170,31 @@ public class World extends JPanel {
 				flexibly();
 				switchBackground();
 				marioJumpAction();
+				standOnBrick();
 				repaint();
 			}
 		}, 60, 60);
 	}
+	
+//	public void moveObject() {
+//		if (background.getBackgroundNum() != 1) {
+//			bricks[0].setY(1000);
+//		}
+//	}
 
 	@Override
 	public void paint(Graphics g) {
 		background.paintObject(g);
 		mario.paintObject(g);
+//		if (background.getBackgroundNum() == 1) {
+//			bricks[0].paintObject(g);
+//		}
+		for (int i = 0; i < bricks.length; i++) {
+			Brick b = bricks[i];
+			if (b.getScene() == background.getBackgroundNum()) {
+				b.paintObject(g);
+			}
+		}
 	}
 
 	public static void main(String[] args) {
@@ -135,6 +205,7 @@ public class World extends JPanel {
 		frame.add(world);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
+		frame.setUndecorated(true);  //隐藏窗口边框
 		frame.setVisible(true);
 
 		world.action();

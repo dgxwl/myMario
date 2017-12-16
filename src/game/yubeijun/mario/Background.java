@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 public class Background extends GameObject {
 	private static BufferedImage[] images;
 	static {
-		images = new BufferedImage[2];
+		images = new BufferedImage[14];
 		for (int i = 0; i < images.length; i++) {
 			images[i] = loadImage("background" + i +".png");
 		}
@@ -36,10 +36,12 @@ public class Background extends GameObject {
 		backgroundNum++;
 	}
 
-	@Override
-	public void stepLeft() {}
 
+	public int getBackgroundNum() {
+		return backgroundNum;
+	}
 
-	@Override
-	public void stepRight() {}
+	public void setBackgroundNum(int backgroundNum) {
+		this.backgroundNum = backgroundNum;
+	}
 }
