@@ -23,9 +23,13 @@ public class Mario extends GameObject {
 	public static final int LEFT_JUMP = 4;
 	/** 向右原地跳状态 */
 	public static final int RIGHT_JUMP = 5;
+	/** 向左跨越跳 */
+	public static final int LEFT_SPAN_JUMP = 6;
+	/** 向右跨越跳 */
+	public static final int RIGHT_SPAN_JUMP = 7;
 
 	private int state = RIGHT_STAND;
-	
+	/** 是否在地面上 */
 	private boolean isOnGround = true;
 	
 	static {
@@ -46,7 +50,7 @@ public class Mario extends GameObject {
 	private int ySpeed;  //向上的速度    2
 
 	public Mario() {
-		super(48, 96, 300, 528);
+		super(48, 96, 190, 528);
 		state = RIGHT_STAND;
 		gravity = 2;
 		ySpeed = 3;
@@ -56,6 +60,7 @@ public class Mario extends GameObject {
 	/** 向左走 */
 	public void stepLeft() {
 		state = MOVE_LEFT;
+		xSpeed = 8;
 		x -= xSpeed;
 		if (x<0) {
 			x = 0;
@@ -65,51 +70,53 @@ public class Mario extends GameObject {
 	/** 向右走 */
 	public void stepRight() {
 		state = MOVE_RIGHT;
+		xSpeed = 8;
 		x += xSpeed;
 	}
 	
 	/** 向上跳 */
 	public void jump() {
 		y  -= 30;
-	}
-	
-	/** 向左跳 */
-	public void jumpLeft() {
-		state = LEFT_JUMP;
-		y = 350;
-		y += ySpeed;
-		ySpeed += gravity;
-		if (y>528) {
-			isOnGround = false;
+		if (state == LEFT_STAND) {
+			state = LEFT_JUMP;
+		}
+		if (state == RIGHT_STAND) {
+			state = RIGHT_JUMP;
 		}
 	}
 	
-	/** 向右跳 */
-	public void jumpRight() {
-		state = RIGHT_JUMP;
-		y = 350;
-		y += ySpeed;
-		ySpeed += gravity;
-		if (y>528) {
-			y = 528;
-			ySpeed = 2;
-			state = RIGHT_STAND;
+	/** 向左跨越跳 */
+	public void jumpSpanLeft() {
+		state = LEFT_SPAN_JUMP;
+		xSpeed = 13;
+		x -= xSpeed;
+		if (x<0) {
+			x = 0;
 		}
+		y  -= 30;
+	}
+	
+	/** 向右跨越跳 */
+	public void jumpSpanRight() {
+		state = RIGHT_SPAN_JUMP;
+		xSpeed = 13;
+		x += xSpeed;
+		y  -= 30;
 	}
 	
 	/**
 	 * 马里奥受到重力的作用
 	 */
 	public void gravity() {
-		if (!isOnGround) {
-			y += ySpeed;
-			ySpeed += gravity;
-		} else {
-			y = 528;
-		}
+		y += ySpeed;
+		ySpeed += gravity;
+//		if (y>528) {
+//			y = 528;
+//		}
 	}
-
+	
 	public boolean isOnGround() {
+		isOnGround = y>=500;
 		return isOnGround;
 	}
 
@@ -123,6 +130,14 @@ public class Mario extends GameObject {
 	
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public int getySpeed() {
+		return ySpeed;
+	}
+
+	public void setySpeed(int ySpeed) {
+		this.ySpeed = ySpeed;
 	}
 
 	int rIndex = 0;
@@ -139,12 +154,14 @@ public class Mario extends GameObject {
 			lIndex %= 3;
 			return lImages[lIndex];
 		case LEFT_JUMP:
+		case LEFT_SPAN_JUMP:
 			if (y==528) {
 				state = LEFT_STAND;
 				return lImages[3];
 			}
 			return ljump;
 		case RIGHT_JUMP:
+		case RIGHT_SPAN_JUMP:
 			if (y==528) {
 				state = RIGHT_STAND;
 				return rImages[3];

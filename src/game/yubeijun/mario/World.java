@@ -43,12 +43,15 @@ public class World extends JPanel {
 			mario.setOnGround(false);
 			mario.jump();
 		} else if (isA && !isD && isW) {
-			
+			mario.jumpSpanLeft();
 		} else if (!isA && isD && isW) {
-			
+			mario.jumpSpanRight();
 		}
 	}
 	
+	/**
+	 * 切换场景(当Mario走到屏幕最右边)
+	 */
 	public void switchBackground() {
 		if (mario.getX()+48>=World.WIDTH) {
 			mario.setX(0);
@@ -56,11 +59,17 @@ public class World extends JPanel {
 		}
 	}
 	
-//	public void isMarioOnGround() a{
-//		if () {
-//			
-//		}
-//	}
+	/**
+	 * Mario的跳跃（受到重力，碰到地面时Y坐标为528）
+	 */
+	public void marioJumpAction() {
+		if (!mario.isOnGround()) {
+			mario.gravity();
+		} else {
+			mario.setySpeed(3);
+			mario.setY(528);
+		}
+	}
 
 	public void action() {
 		KeyAdapter l = new KeyAdapter() {
@@ -84,20 +93,17 @@ public class World extends JPanel {
 			public void keyReleased(KeyEvent e) {
 				int code = e.getKeyCode();
 				switch (code) {
-				case 65: // 按A向左走
+				case 65: // 释放A键
 					isA = false;
+					mario.setState(Mario.LEFT_STAND);
 					break;
-				case 68: // 按D向右走
+				case 68: // 释放D键
 					isD = false;
+					mario.setState(Mario.RIGHT_STAND);
 					break;
-				case 87: // 按W跳跃
+				case 87: // 释放W键
 					isW = false;
 					break;
-				}
-				if (mario.getState() == Mario.MOVE_RIGHT) {
-					mario.setState(Mario.RIGHT_STAND);
-				} else if (mario.getState() == Mario.MOVE_LEFT) {
-					mario.setState(Mario.LEFT_STAND);
 				}
 			}
 		};
@@ -109,7 +115,7 @@ public class World extends JPanel {
 			public void run() {
 				flexibly();
 				switchBackground();
-				mario.gravity();
+				marioJumpAction();
 				repaint();
 			}
 		}, 60, 60);
@@ -134,25 +140,6 @@ public class World extends JPanel {
 		world.action();
 		world.requestFocus();
 
-		PlayMusic p = new PlayMusic();
-		p.play();
-
 	}
 
-}
-
-class PlayMusic {
-    public static AudioClip loadSound(String filename) {
-        URL url = null;
-        try {
-            url = new URL("file:" + filename);
-        }
-        catch (MalformedURLException e) {;}
-        return JApplet.newAudioClip(url);
-    }
-    
-    public void play() {
-        AudioClip christmas = loadSound("bg.wav");
-        christmas.loop();
-    }
 }
