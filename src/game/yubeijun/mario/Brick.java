@@ -2,7 +2,7 @@ package game.yubeijun.mario;
 
 import java.awt.image.BufferedImage;
 /**
- * 砖头
+ * 砖块
  */
 public class Brick extends GameObject {
 	private static BufferedImage image;
@@ -13,14 +13,17 @@ public class Brick extends GameObject {
 	/** 应当出现的场景数 */
 	private int scene;
 	
-	public Brick(int scene) {
-		super(48, 48, 0, 0);
+	public Brick(int x, int y, int scene) {
+		super(48, 48, x, y);
 		this.scene = scene;
 	}
 
 	@Override
 	public BufferedImage getImage() {
-		return image;
+		if (isLife()) {
+			return image;
+		}
+		return null;
 	}
 
 	public void setY(int y) {

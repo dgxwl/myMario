@@ -208,6 +208,14 @@ public class Mario extends GameObject {
 		int x1 = brick.x - this.width;
 		int x2 = brick.x + brick.width;
 		int y1 = brick.y - this.height;
-		return x>=x1 && x<=x2 && y<=y1+30 && y>=y1-5;
+		return x>x1 && x<x2 && y<=y1+30 && y>=y1-5;
+	}
+	
+	/** 马里奥是否顶到砖块 */
+	public boolean hitBrick(Brick brick) {
+		int x1 = brick.x - this.width;
+		int x2 = brick.x + brick.width;
+		int y1 = brick.y + brick.height;
+		return x>x1 && x<x2 && y<=y1+5 && y>=y1-5;
 	}
 }

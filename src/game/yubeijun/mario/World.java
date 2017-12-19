@@ -31,28 +31,40 @@ public class World extends JPanel {
 	
 	private Background background = new Background();
 	private Mario mario = new Mario();
-	private Brick[] bricks = new Brick[3];  //全关一共有30块砖头
+	private Brick[] bricks = new Brick[30];  //全关一共有30块砖头
 	
-//	public void initGameObject() {
-//		bricks[0] = new Brick(192, 432, 1);
-//		bricks[1] = new Brick(288, 432, 1);
-//		bricks[2] = new Brick(384, 432, 1);
-//	}
-	
+	/** 初始化游戏中所有砖块 */
 	public void initGameObject() {
-		bricks[0] = new Brick(1);
-		bricks[1] = new Brick(1);
-		bricks[2] = new Brick(1);
-		bricks[3] = new Brick(5);
-		bricks[4] = new Brick(5);
-		bricks[5] = new Brick(5);
-		bricks[6] = new Brick(5);
-		bricks[7] = new Brick(5);
-		bricks[8] = new Brick(5);
-		bricks[9] = new Brick(5);
-		bricks[10] = new Brick(5);
-		bricks[11] = new Brick(5);
-		bricks[12] = new Brick(5);
+		bricks[0] = new Brick(192, 432, 1);
+		bricks[1] = new Brick(288, 432, 1);
+		bricks[2] = new Brick(384, 432, 1);
+		bricks[3] = new Brick(576, 432, 4);
+		bricks[4] = new Brick(672, 432, 4);
+		bricks[5] = new Brick(0, 240, 5);
+		bricks[6] = new Brick(48, 240, 5);
+		bricks[7] = new Brick(96, 240, 5);
+		bricks[8] = new Brick(144, 240, 5);
+		bricks[9] = new Brick(192, 240, 5);
+		bricks[10] = new Brick(240, 240, 5);
+		bricks[11] = new Brick(288, 240, 5);
+		bricks[12] = new Brick(336, 240, 5);
+		bricks[13] = new Brick(528, 240, 5);
+		bricks[14] = new Brick(576, 240, 5);
+		bricks[15] = new Brick(624, 240, 5);
+		bricks[16] = new Brick(672, 432, 5);
+		bricks[17] = new Brick(192, 432, 6);
+		bricks[18] = new Brick(240, 432, 6);
+		bricks[19] = new Brick(288, 432, 7);
+		bricks[20] = new Brick(144, 240, 7);
+		bricks[21] = new Brick(192, 240, 7);
+		bricks[22] = new Brick(240, 240, 7);
+		bricks[23] = new Brick(0, 240, 8);
+		bricks[24] = new Brick(144, 240, 8);
+		bricks[25] = new Brick(48, 432, 8);
+		bricks[26] = new Brick(96, 432, 8);
+		bricks[27] = new Brick(384, 432, 10);
+		bricks[28] = new Brick(432, 432, 10);
+		bricks[29] = new Brick(528, 432, 10);
 	}
 	
 	public void hideObject() {
@@ -93,7 +105,7 @@ public class World extends JPanel {
 	}
 	
 	/**
-	 * Mario的跳跃（受到重力，碰到地面时Y坐标为528）
+	 * Mario的跳跃（受到重力，站在地面时y坐标为528）
 	 */
 	public void marioJumpAction() {
 		if (!mario.isOnGround()) {
@@ -104,10 +116,14 @@ public class World extends JPanel {
 		}
 	}
 	
+	/** Mario站在砖块上 */
 	public void standOnBrick() {
 		for (int i = 0; i < bricks.length; i++) {
 			Brick b = bricks[i];
-			if (mario.isOnBrick(b)) {
+			if (b.getScene() != background.getBackgroundNum()) {  //如果不是该场景的砖块，不进行碰撞检测
+				continue;
+			}
+			if (mario.isOnBrick(b) && b.isLife()) {
 				if (mario.getState()==Mario.LEFT_JUMP || mario.getState()==Mario.LEFT_SPAN_JUMP) {
 					mario.setState(Mario.LEFT_STAND);
 				}
@@ -119,7 +135,22 @@ public class World extends JPanel {
 			}
 		}
 	}
-
+	
+	/** 马里奥顶砖块 */
+	public void hitBrick() {
+		for (int i = 0; i < bricks.length; i++) {
+			Brick b = bricks[i];
+			if (b.getScene() != background.getBackgroundNum()) {  //如果不是该场景的砖块，不进行碰撞检测
+				continue;
+			}
+			if (b.isLife() && mario.hitBrick(b)) {
+				b.goDead();
+				isW = false;
+				mario.setY(b.getY()+48);
+			}
+		}
+	}
+	
 	public void action() {
 		
 		initGameObject();
@@ -171,26 +202,19 @@ public class World extends JPanel {
 				switchBackground();
 				marioJumpAction();
 				standOnBrick();
+				hitBrick();
+//				System.out.println(bricks[0].isLife());
 				repaint();
 			}
 		}, 60, 60);
 	}
-	
-//	public void moveObject() {
-//		if (background.getBackgroundNum() != 1) {
-//			bricks[0].setY(1000);
-//		}
-//	}
 
 	@Override
 	public void paint(Graphics g) {
 		background.paintObject(g);
 		mario.paintObject(g);
-//		if (background.getBackgroundNum() == 1) {
-//			bricks[0].paintObject(g);
-//		}
-		for (int i = 0; i < bricks.length; i++) {
-			Brick b = bricks[i];
+
+		for (Brick b : bricks) {  //画存在于当前场景的砖块
 			if (b.getScene() == background.getBackgroundNum()) {
 				b.paintObject(g);
 			}

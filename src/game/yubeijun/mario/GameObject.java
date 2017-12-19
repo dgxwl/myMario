@@ -15,6 +15,10 @@ public abstract class GameObject {
 	protected int y;
 	protected int width;
 	protected int height;
+	
+	public static final int LIFE = 0;
+	public static final int DEAD = 1;
+	protected int state = LIFE;
 
 	public GameObject(int width, int height, int x, int y) {
 		this.width = width;
@@ -47,5 +51,17 @@ public abstract class GameObject {
 	/** 画对象 g:画笔 */
 	public void paintObject(Graphics g) {
 		g.drawImage(getImage(), x, y, null);  //画对象
+	}
+	
+	public boolean isLife() {
+		return state == LIFE;
+	}
+	
+	public boolean isDead() {
+		return state == DEAD;
+	}
+	
+	public void goDead() {
+		state = DEAD;
 	}
 }
